@@ -42,20 +42,21 @@ endif
 
 all:
 	@echo ""
-	@echo "## First time"
+	@echo "## Get the source"
 	@echo "make clone              # Get openocd source from git repo"
+	@echo "make pull               # ..."
+	@echo ""
+	@echo "## Build"
 	@echo "make prepare            # Checkout specific version"
 	@echo "make configure [M=...]"
 	@echo "make compile [J=...]"
+	@echo ""
+	@echo "## Install"
 	@echo "sudo make install"
 	@echo ""
-	@echo "## Any other time"
+	@echo "## Cleanup"
 	@echo "make distclean          # Clean all build products"
-	@echo "make pull               # ..."
-	@echo "make prepare            # Checkout specific version"
-	@echo "make configure [M=...]"
-	@echo "make compile [J=...]"
-	@echo "sudo make install"
+	@echo "make clean"
 	@echo ""
 
 
