@@ -35,12 +35,8 @@ Build
 # Checkout specific version and rebuild configure.
 make prepare
 
-# Configure source code for 64-bit compile (Default: M=64).
+# Configure source code.
 make configure
-make configure M=64
-
-# Configure source code for 32-bit compile.
-make configure M=32
 
 # Compile source code using 4 simultaneous jobs (Default: J=4).
 make compile
