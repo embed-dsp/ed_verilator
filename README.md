@@ -2,11 +2,11 @@
 Compile and Install of the Verilator Tool
 =========================================
 
-This repository contains make file for easy compile and install of the Verilator Tool.
+This repository contains make file for easy compile and install of [Verilator](https://www.veripool.org/wiki/verilator).
 Verilator compiles synthesizable Verilog / SystemVerilog into C++ and SystemC code.
 
-Get tool and source code
-========================
+Get Source Code
+===============
 
 ## ed_verilator
 ```bash
@@ -18,10 +18,10 @@ git clone https://github.com/embed-dsp/ed_verilator.git
 # Enter the ed_verilator directory.
 cd ed_verilator
 
-# Clone Verilator repository.
+# Clone the Verilator git repository.
 make clone
 
-# Pull latest updates from Verilator repository.
+# Pull latest updates from the Verilator git repository.
 make pull
 
 # Edit the Makefile for selecting the Verilator source version.
@@ -59,7 +59,7 @@ opt
     │       ├── bin
     │       │   ├── verilator
     │       │       ...
-    │       └── share
+    │       └── share           # ...
     │           ├── verilator
     │           │   ├── include # Include directory.
     │                   ...
