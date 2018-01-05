@@ -2,6 +2,7 @@
 # Directories ...
 build/
 tmp/
+doc/
 verilator/
 
 # Backup files
