@@ -13,7 +13,7 @@ Get Source Code
 git clone https://github.com/embed-dsp/ed_verilator.git
 ```
 
-## Verilator Source
+## Verilator
 ```bash
 # Enter the ed_verilator directory.
 cd ed_verilator
