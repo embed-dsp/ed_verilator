@@ -70,3 +70,6 @@ opt
 
 Notes
 =====
+
+This has been testes with the following Linux distributions and compilers:
+* `Fedora-27 (64-bit)` and `gcc-7.2.1`
