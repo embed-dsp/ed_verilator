@@ -7,9 +7,6 @@
 # $Revision: $
 
 
-CC = /usr/bin/gcc
-CXX = /usr/bin/g++
-
 PACKAGE_NAME = verilator
 
 # Package version number (git master branch)
@@ -17,13 +14,27 @@ PACKAGE_NAME = verilator
 # PACKAGE = $(PACKAGE_NAME)_$(PACKAGE_VERSION)
 
 # Package version number (git tag)
-PACKAGE_VERSION = verilator_3_918
+PACKAGE_VERSION = verilator_3_922
 PACKAGE = $(PACKAGE_VERSION)
 
-# Architecture.
-ARCH = $(shell ./bin/get_arch.sh)
+# Build for 32-bit or 64-bit (Default)
+ifeq ($(M),)
+	M = 64
+endif
 
-# Installation.
+ifeq ($(M),64)
+	# CXXFLAGS = -Wall -O2 -m64
+else
+	# CXXFLAGS = -Wall -O2 -m64
+endif
+
+CC = /usr/bin/gcc
+CXX = /usr/bin/g++
+
+# Architecture.
+ARCH = $(shell ./bin/get_arch.sh $(M))
+
+# Installation directories.
 PREFIX = /opt/veripool/$(ARCH)/$(PACKAGE)
 # PREFIX = /opt/veripool/$(PACKAGE)
 # EXEC_PREFIX = $(PREFIX)/$(ARCH)
@@ -83,6 +94,7 @@ prepare:
 .PHONY: configure
 configure:
 	cd $(PACKAGE_NAME) && ./configure CC=$(CC) CXX=$(CXX) --prefix=$(PREFIX)
+#	cd $(PACKAGE_NAME) && ./configure CC=$(CC) CXX=$(CXX) CXXFLAGS="$(CXXFLAGS)" --prefix=$(PREFIX)
 
 
 .PHONY: compile
