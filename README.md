@@ -1,23 +1,15 @@
 
 # Compile and Install of the Verilator Tool
 
-This repository contains make file for easy compile and install of [Verilator](https://www.veripool.org/wiki/verilator).
+This repository contains a **make** file for easy compile and install of [Verilator](https://www.veripool.org/wiki/verilator).
 Verilator compiles synthesizable Verilog / SystemVerilog into C++ and SystemC code.
 
-
-# Prerequisites
-
-## Fedora-27 64-bit | Fedora-28 64-bit
-
-```
-dnf install gcc-c++
-
-dnf install perl
-dnf install perl-devel
-dnf install perl-Digest-SHA
-
-dnf install redhat-rpm-config
-```
+This **make** file can build the GTKWave tool on the following systems:
+* Linux
+* Windows
+    * [MSYS2](https://www.msys2.org)/mingw64
+    * [MSYS2](https://www.msys2.org)/mingw32
+    * **FIXME**: [Cygwin](https://www.cygwin.com)
 
 
 # Get Source Code
@@ -50,7 +42,7 @@ git tag
 
 # Edit the Makefile for selecting the Verilator source version.
 vim Makefile
-PACKAGE_VERSION = verilator_3_922
+PACKAGE_VERSION = verilator_4_004
 ```
 
 
@@ -67,9 +59,11 @@ make configure
 ```
 
 ```bash
-# Compile source code using 4 simultaneous jobs (Default: J=4).
+# Compile source code using 4 simultaneous jobs (Default).
 make compile
-make compile J=4
+
+# Compile source code using 2 simultaneous jobs.
+make compile J=2
 ```
 
 
@@ -77,6 +71,7 @@ make compile J=4
 
 ```bash
 # Install build products.
+# FIXME: sudo
 sudo make install
 ```
 
@@ -85,11 +80,12 @@ The Verilator package does NOT install correctly according to the
 The build products are therefore installed in the following locations in order 
 to allow separate installation for different architectures:
 
+FIXME: linux, arm, ...
 ```bash
 opt/
 └── veripool/
     ├── linux_x86_64/               # 64-bit binaries and libraries for Linux
-    │   └── verilator_3_922/
+    │   └── verilator_4_004/
     │       ├── bin/
     │       │   ├── verilator
     │       │       ...
@@ -98,7 +94,7 @@ opt/
     │           │   ├── include/    # Include directory.
     │                   ...
     └── linux_x86/                  # 32-bit binaries and libraries for Linux
-        └── verilator_3_922/
+        └── verilator_4_004/
             ├── bin/
             │   ├── verilator
             │       ...
@@ -110,7 +106,17 @@ opt/
 ```
 
 
-# Notes
+FIXME: windows 64-bit, mingw32, mingw64
+
+
+# Tested System Configurations
+
+System  | M=                | M=32  
+--------|-------------------|-------------------
+linux   | Fedora-28 64-bit  | 
+mingw64 | Windows-10 64-bit |
+mingw32 | Windows-10 64-bit |
+cygwin  | **FIXME**         |
 
 This has been testes with the following Linux distributions and compilers:
 * `Fedora-27 (64-bit)`
@@ -118,3 +124,18 @@ This has been testes with the following Linux distributions and compilers:
     * `gcc-7.3.1`
 * `Fedora-28 (64-bit)`
     * `gcc-8.1.1`
+
+
+# Prerequisites
+
+## Fedora-27 64-bit | Fedora-28 64-bit
+
+```
+dnf install gcc-c++
+
+dnf install perl
+dnf install perl-devel
+dnf install perl-Digest-SHA
+
+dnf install redhat-rpm-config
+```

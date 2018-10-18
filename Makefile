@@ -18,30 +18,20 @@ PACKAGE_NAME = verilator
 PACKAGE_VERSION = verilator_4_004
 PACKAGE = $(PACKAGE_VERSION)
 
-# Build for 32-bit or 64-bit (Default)
-ifeq ($(M),)
-	M = 64
-endif
-
 # Set number of simultaneous jobs (Default 4)
 ifeq ($(J),)
 	J = 4
 endif
 
-# Kernel.
-KERN = $(shell ./bin/get_kernel.sh)
+# System and Machine.
+SYSTEM = $(shell ./bin/get_system.sh)
+MACHINE = $(shell ./bin/get_machine.sh)
 
-# Machine.
-MACH = $(shell ./bin/get_machine.sh $(M))
-
-# Architecture.
-ARCH = $(KERN)_$(MACH)
-
-# ...
+# System configuration.
 CONFIGURE_FLAGS =
 
-# Linux specifics.
-ifeq ($(KERN),linux)
+# Linux system.
+ifeq ($(SYSTEM),linux)
 	# Compiler.
 	CC = /usr/bin/gcc
 	CXX = /usr/bin/g++
@@ -49,8 +39,8 @@ ifeq ($(KERN),linux)
 	INSTALL_DIR = /opt
 endif
 
-# Cygwin specifics.
-ifeq ($(KERN),cygwin)
+# Cygwin system.
+ifeq ($(SYSTEM),cygwin)
 	# Compiler.
 	CC = /usr/bin/gcc
 	CXX = /usr/bin/g++
@@ -58,17 +48,17 @@ ifeq ($(KERN),cygwin)
 	INSTALL_DIR = /cygdrive/c/opt
 endif
 
-# MinGW specifics.
-ifeq ($(KERN),mingw32)
+# MSYS2/mingw32 system.
+ifeq ($(SYSTEM),mingw32)
 	# Compiler.
-	CC = /mingw/bin/gcc
-	CXX = /mingw/bin/g++
+	CC = /mingw32/bin/gcc
+	CXX = /mingw32/bin/g++
 	# Installation directory.
 	INSTALL_DIR = /c/opt
 endif
 
-# MinGW-W64 specifics.
-ifeq ($(KERN),mingw64)
+# MSYS2/mingw64 system.
+ifeq ($(SYSTEM),mingw64)
 	# Compiler.
 	CC = /mingw64/bin/gcc
 	CXX = /mingw64/bin/g++
@@ -76,12 +66,18 @@ ifeq ($(KERN),mingw64)
 	INSTALL_DIR = /c/opt
 endif
 
+# Architecture.
+ARCH = $(SYSTEM)_$(MACHINE)
+
 # Installation directory.
 PREFIX = $(INSTALL_DIR)/veripool/$(ARCH)/$(PACKAGE)
+# PREFIX = $(INSTALL_DIR)/veripool/$(PACKAGE)
 # EXEC_PREFIX = $(PREFIX)/$(ARCH)
 
 
 all:
+	@echo "ARCH   = $(ARCH)"
+	@echo "PREFIX = $(PREFIX)"
 	@echo ""
 	@echo "## Get Source Code"
 	@echo "make clone"
@@ -93,7 +89,7 @@ all:
 	@echo "make compile [J=...]"
 	@echo ""
 	@echo "## Install"
-	@echo "sudo make install"
+	@echo "[sudo] make install"
 	@echo ""
 	@echo "## Cleanup"
 	@echo "make clean"
@@ -134,8 +130,11 @@ configure:
 
 .PHONY: compile
 compile:
-ifeq ($(KERN),mingw64)
-	# NOTE: The FlexLexer.h file is not found unless we copy it to the verilator/src directory!
+	# NOTE: The FlexLexer.h file is not found when using MSYS2/mingw* unless we copy it to the verilator/src directory!
+ifeq ($(SYSTEM),mingw32)
+	cp /usr/include/FlexLexer.h verilator/src/FlexLexer.h
+endif
+ifeq ($(SYSTEM),mingw64)
 	cp /usr/include/FlexLexer.h verilator/src/FlexLexer.h
 endif
 	cd $(PACKAGE_NAME) && make -j$(J)
@@ -160,8 +159,11 @@ install:
 .PHONY: clean
 clean:
 	cd $(PACKAGE_NAME) && make clean
-ifeq ($(KERN),mingw64)
-	# NOTE: ...
+	# NOTE: Remove the FlexLexer.h file.
+ifeq ($(SYSTEM),mingw32)
+	-rm verilator/src/FlexLexer.h
+endif
+ifeq ($(SYSTEM),mingw64)
 	-rm verilator/src/FlexLexer.h
 endif
 
