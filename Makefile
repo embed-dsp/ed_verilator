@@ -18,6 +18,8 @@ PACKAGE_NAME = verilator
 PACKAGE_VERSION = verilator_4_004
 PACKAGE = $(PACKAGE_VERSION)
 
+# ==============================================================================
+
 # Set number of simultaneous jobs (Default 4)
 ifeq ($(J),)
 	J = 4
