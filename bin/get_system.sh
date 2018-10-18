@@ -10,7 +10,7 @@
 # This shell script returns the system name.
 #
 # Usage:
-#   get_system.sh   Return system name.
+#   get_system.sh
 
 system=$(uname -s)
 
