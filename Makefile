@@ -15,7 +15,7 @@ PACKAGE_NAME = verilator
 
 # Package version number (git tag)
 #PACKAGE_VERSION = verilator_3_926
-PACKAGE_VERSION = verilator_4_004
+PACKAGE_VERSION = verilator_4_006
 PACKAGE = $(PACKAGE_VERSION)
 
 # ==============================================================================
