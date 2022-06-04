@@ -14,15 +14,19 @@ PACKAGE_NAME = verilator
 # PACKAGE = $(PACKAGE_NAME)_$(PACKAGE_VERSION)
 
 # Package version number (git tag)
-#PACKAGE_VERSION = verilator_3_926
-PACKAGE_VERSION = verilator_4_008
+# PACKAGE_VERSION = verilator_4_012
+PACKAGE_VERSION = v4.222
 PACKAGE = $(PACKAGE_VERSION)
+
+# SystemC Installation ...
+export SYSTEMC_INCLUDE=/opt/systemc/linux_x86_64/systemc-2.3.3/include
+export SYSTEMC_LIBDIR=/opt/systemc/linux_x86_64/systemc-2.3.3/lib-linux64
 
 # ==============================================================================
 
-# Set number of simultaneous jobs (Default 4)
+# Set number of simultaneous jobs (Default 8)
 ifeq ($(J),)
-	J = 4
+	J = 8
 endif
 
 # System and Machine.
@@ -107,7 +111,8 @@ clone:
 .PHONY: pull
 pull:
 	# Discard any local changes
-	cd $(PACKAGE_NAME) && git checkout -- .
+	# cd $(PACKAGE_NAME) && git checkout -- .
+	cd $(PACKAGE_NAME) && git reset --hard
 	
 	# Checkout master branch
 	cd $(PACKAGE_NAME) && git checkout master
@@ -118,6 +123,10 @@ pull:
 
 .PHONY: prepare
 prepare:
+	# Discard any local changes
+	# cd $(PACKAGE_NAME) && git checkout -- .
+	cd $(PACKAGE_NAME) && git reset --hard
+	
 	# Checkout specific version
 	cd $(PACKAGE_NAME) && git checkout $(PACKAGE_VERSION)
 	
@@ -140,22 +149,24 @@ ifeq ($(SYSTEM),mingw64)
 	cp /usr/include/FlexLexer.h verilator/src/FlexLexer.h
 endif
 	cd $(PACKAGE_NAME) && make -j$(J)
-	cd verilator && make README
-	cd verilator && make internals.txt
-	cd verilator && make verilator.txt
+	cd $(PACKAGE_NAME) && make verilator.pdf
+	# cd verilator && make README
+	# cd verilator && make internals.txt
+	# cd verilator && make verilator.txt
 
 
 .PHONY: install
 install:
 	cd $(PACKAGE_NAME) && make install
+	-mkdir -p $(PREFIX)/share/doc
+	-cd $(PACKAGE_NAME)/docs/_build/latex && cp verilator.pdf $(PREFIX)/share/doc
 	# -mv $(PREFIX)/share/verilator/bin/verilator_includer $(PREFIX)/bin
 	# -mv $(PREFIX)/share/verilator/include $(PREFIX)
 	# -rm -rf $(PREFIX)/share/verilator
 	# -cd build/$(PACKAGE) && cp verilator_coverage.1 $(PREFIX)/share/man/man1
-	-mkdir -p $(PREFIX)/share/doc
-	-cd verilator && cp README $(PREFIX)/share/doc
-	-cd verilator && cp internals.txt $(PREFIX)/share/doc
-	-cd verilator && cp verilator.txt $(PREFIX)/share/doc
+	# -cd verilator && cp README $(PREFIX)/share/doc
+	# -cd verilator && cp internals.txt $(PREFIX)/share/doc
+	# -cd verilator && cp verilator.txt $(PREFIX)/share/doc
 
 
 .PHONY: clean
