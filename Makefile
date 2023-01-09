@@ -1,10 +1,6 @@
 
-# Copyright (c) 2018 embed-dsp
-# All Rights Reserved
-
-# $Author:   Gudmundur Bogason <gb@embed-dsp.com> $
-# $Date:     $
-# $Revision: $
+# Copyright (c) 2018-2023 embed-dsp, All Rights Reserved.
+# Author: Gudmundur Bogason <gb@embed-dsp.com>
 
 
 PACKAGE_NAME = verilator
@@ -14,8 +10,7 @@ PACKAGE_NAME = verilator
 # PACKAGE = $(PACKAGE_NAME)_$(PACKAGE_VERSION)
 
 # Package version number (git tag)
-# PACKAGE_VERSION = verilator_4_012
-PACKAGE_VERSION = v4.222
+PACKAGE_VERSION = v5.004
 PACKAGE = $(PACKAGE_VERSION)
 
 # SystemC Installation ...
@@ -24,19 +19,38 @@ export SYSTEMC_LIBDIR=/opt/systemc/linux_x86_64/systemc-2.3.3/lib-linux64
 
 # ==============================================================================
 
+# Determine system.
+SYSTEM = unknown
+ifeq ($(findstring Linux, $(shell uname -s)), Linux)
+	SYSTEM = linux
+endif
+ifeq ($(findstring MINGW32, $(shell uname -s)), MINGW32)
+	SYSTEM = mingw32
+endif
+ifeq ($(findstring MINGW64, $(shell uname -s)), MINGW64)
+	SYSTEM = mingw64
+endif
+ifeq ($(findstring CYGWIN, $(shell uname -s)), CYGWIN)
+	SYSTEM = cygwin
+endif
+
+# Determine machine.
+MACHINE = $(shell uname -m)
+
+# Architecture.
+ARCH = $(SYSTEM)_$(MACHINE)
+
+# ==============================================================================
+
 # Set number of simultaneous jobs (Default 8)
 ifeq ($(J),)
 	J = 8
 endif
 
-# System and Machine.
-SYSTEM = $(shell ./bin/get_system.sh)
-MACHINE = $(shell ./bin/get_machine.sh)
-
 # System configuration.
 CONFIGURE_FLAGS =
 
-# Linux system.
+# Configuration for linux system.
 ifeq ($(SYSTEM),linux)
 	# Compiler.
 	CC = /usr/bin/gcc
@@ -45,16 +59,7 @@ ifeq ($(SYSTEM),linux)
 	INSTALL_DIR = /opt
 endif
 
-# Cygwin system.
-ifeq ($(SYSTEM),cygwin)
-	# Compiler.
-	CC = /usr/bin/gcc
-	CXX = /usr/bin/g++
-	# Installation directory.
-	INSTALL_DIR = /cygdrive/c/opt
-endif
-
-# MSYS2/mingw32 system.
+# Configuration for mingw32 system.
 ifeq ($(SYSTEM),mingw32)
 	# Compiler.
 	CC = /mingw32/bin/gcc
@@ -63,7 +68,7 @@ ifeq ($(SYSTEM),mingw32)
 	INSTALL_DIR = /c/opt
 endif
 
-# MSYS2/mingw64 system.
+# Configuration for mingw64 system.
 ifeq ($(SYSTEM),mingw64)
 	# Compiler.
 	CC = /mingw64/bin/gcc
@@ -72,14 +77,21 @@ ifeq ($(SYSTEM),mingw64)
 	INSTALL_DIR = /c/opt
 endif
 
-# Architecture.
-ARCH = $(SYSTEM)_$(MACHINE)
+# Configuration for cygwin system.
+ifeq ($(SYSTEM),cygwin)
+	# Compiler.
+	CC = /usr/bin/gcc
+	CXX = /usr/bin/g++
+	# Installation directory.
+	INSTALL_DIR = /cygdrive/c/opt
+endif
 
 # Installation directory.
 PREFIX = $(INSTALL_DIR)/veripool/$(ARCH)/$(PACKAGE)
 # PREFIX = $(INSTALL_DIR)/veripool/$(PACKAGE)
 # EXEC_PREFIX = $(PREFIX)/$(ARCH)
 
+# ==============================================================================
 
 all:
 	@echo "ARCH   = $(ARCH)"
@@ -113,10 +125,10 @@ pull:
 	# Discard any local changes
 	# cd $(PACKAGE_NAME) && git checkout -- .
 	cd $(PACKAGE_NAME) && git reset --hard
-	
+
 	# Checkout master branch
 	cd $(PACKAGE_NAME) && git checkout master
-	
+
 	# ...
 	cd $(PACKAGE_NAME) && git pull
 
@@ -126,10 +138,10 @@ prepare:
 	# Discard any local changes
 	# cd $(PACKAGE_NAME) && git checkout -- .
 	cd $(PACKAGE_NAME) && git reset --hard
-	
+
 	# Checkout specific version
 	cd $(PACKAGE_NAME) && git checkout $(PACKAGE_VERSION)
-	
+
 	# Rebuild configure
 	cd $(PACKAGE_NAME) && autoconf
 
