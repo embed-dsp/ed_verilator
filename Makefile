@@ -5,17 +5,13 @@
 
 PACKAGE_NAME = verilator
 
-# Package version number (git master branch)
-# PACKAGE_VERSION = master
-# PACKAGE = $(PACKAGE_NAME)_$(PACKAGE_VERSION)
-
 # Package version number (git tag)
+# PACKAGE_VERSION = master
 PACKAGE_VERSION = v5.004
-PACKAGE = $(PACKAGE_VERSION)
+PACKAGE = $(PACKAGE_NAME)-$(PACKAGE_VERSION)
 
-# SystemC Installation ...
-export SYSTEMC_INCLUDE=/opt/systemc/linux_x86_64/systemc-2.3.3/include
-export SYSTEMC_LIBDIR=/opt/systemc/linux_x86_64/systemc-2.3.3/lib-linux64
+# SystemC version.
+SYSTEMC_VERSION = 2.3.3
 
 # ==============================================================================
 
@@ -55,6 +51,11 @@ ifeq ($(SYSTEM),linux)
 	# Compiler.
 	CC = /usr/bin/gcc
 	CXX = /usr/bin/g++
+
+	# SystemC Installation.
+	export SYSTEMC_INCLUDE=/opt/systemc/$(ARCH)/systemc-$(SYSTEMC_VERSION)/include
+	export SYSTEMC_LIBDIR=/opt/systemc/$(ARCH)/systemc-$(SYSTEMC_VERSION)/lib-linux64
+
 	# Installation directory.
 	INSTALL_DIR = /opt
 endif
@@ -64,6 +65,11 @@ ifeq ($(SYSTEM),mingw32)
 	# Compiler.
 	CC = /mingw32/bin/gcc
 	CXX = /mingw32/bin/g++
+
+	# SystemC Installation.
+	export SYSTEMC_INCLUDE=/c/opt/systemc/$(ARCH)/systemc-$(SYSTEMC_VERSION)/include
+	export SYSTEMC_LIBDIR=/c/opt/systemc/$(ARCH)/systemc-$(SYSTEMC_VERSION)/lib-mingw
+
 	# Installation directory.
 	INSTALL_DIR = /c/opt
 endif
@@ -73,29 +79,39 @@ ifeq ($(SYSTEM),mingw64)
 	# Compiler.
 	CC = /mingw64/bin/gcc
 	CXX = /mingw64/bin/g++
+
+	# SystemC Installation.
+	export SYSTEMC_INCLUDE=/c/opt/systemc/$(ARCH)/systemc-$(SYSTEMC_VERSION)/include
+	export SYSTEMC_LIBDIR=/c/opt/systemc/$(ARCH)/systemc-$(SYSTEMC_VERSION)/lib-mingw
+
 	# Installation directory.
 	INSTALL_DIR = /c/opt
 endif
 
 # Configuration for cygwin system.
-ifeq ($(SYSTEM),cygwin)
-	# Compiler.
-	CC = /usr/bin/gcc
-	CXX = /usr/bin/g++
-	# Installation directory.
-	INSTALL_DIR = /cygdrive/c/opt
-endif
+# ifeq ($(SYSTEM),cygwin)
+# 	# Compiler.
+# 	CC = /usr/bin/gcc
+# 	CXX = /usr/bin/g++
+
+# 	# FIXME: SystemC Installation.
+# 	export SYSTEMC_INCLUDE=/cygdrive/c/opt/systemc/$(ARCH)/systemc-$(SYSTEMC_VERSION)/include
+# 	export SYSTEMC_LIBDIR=/cygdrive/c/opt/systemc/$(ARCH)/systemc-$(SYSTEMC_VERSION)/lib-cygwin
+
+# 	# Installation directory.
+# 	INSTALL_DIR = /cygdrive/c/opt
+# endif
 
 # Installation directory.
 PREFIX = $(INSTALL_DIR)/veripool/$(ARCH)/$(PACKAGE)
-# PREFIX = $(INSTALL_DIR)/veripool/$(PACKAGE)
-# EXEC_PREFIX = $(PREFIX)/$(ARCH)
 
 # ==============================================================================
 
 all:
 	@echo "ARCH   = $(ARCH)"
 	@echo "PREFIX = $(PREFIX)"
+	@echo "SYSTEMC_INCLUDE = $(SYSTEMC_INCLUDE)"
+	@echo "SYSTEMC_LIBDIR  = $(SYSTEMC_LIBDIR)"
 	@echo ""
 	@echo "## Get Source Code"
 	@echo "make clone"
@@ -155,13 +171,13 @@ configure:
 compile:
 	# NOTE: The FlexLexer.h file is not found when using MSYS2/mingw* unless we copy it to the verilator/src directory!
 ifeq ($(SYSTEM),mingw32)
-	cp /usr/include/FlexLexer.h verilator/src/FlexLexer.h
+	cp -a /usr/include/FlexLexer.h verilator/src/FlexLexer.h
 endif
 ifeq ($(SYSTEM),mingw64)
-	cp /usr/include/FlexLexer.h verilator/src/FlexLexer.h
+	cp -a /usr/include/FlexLexer.h verilator/src/FlexLexer.h
 endif
 	cd $(PACKAGE_NAME) && make -j$(J)
-	cd $(PACKAGE_NAME) && make verilator.pdf
+	# cd $(PACKAGE_NAME) && make verilator.pdf
 	# cd verilator && make README
 	# cd verilator && make internals.txt
 	# cd verilator && make verilator.txt
@@ -171,7 +187,8 @@ endif
 install:
 	cd $(PACKAGE_NAME) && make install
 	-mkdir -p $(PREFIX)/share/doc
-	-cd $(PACKAGE_NAME)/docs/_build/latex && cp verilator.pdf $(PREFIX)/share/doc
+	-cd $(PREFIX)/share/doc && wget --no-check-certificate -nc https://www.veripool.org/ftp/verilator_doc.pdf
+	# -cd $(PACKAGE_NAME)/docs/_build/latex && cp verilator.pdf $(PREFIX)/share/doc
 	# -mv $(PREFIX)/share/verilator/bin/verilator_includer $(PREFIX)/bin
 	# -mv $(PREFIX)/share/verilator/include $(PREFIX)
 	# -rm -rf $(PREFIX)/share/verilator
