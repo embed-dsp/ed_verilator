@@ -6,8 +6,8 @@
 PACKAGE_NAME = verilator
 
 # Package version number (git tag)
-# PACKAGE_VERSION = master
-PACKAGE_VERSION = v5.004
+PACKAGE_VERSION = master
+# PACKAGE_VERSION = v5.024
 PACKAGE = $(PACKAGE_NAME)-$(PACKAGE_VERSION)
 
 # SystemC version.
@@ -20,14 +20,8 @@ SYSTEM = unknown
 ifeq ($(findstring Linux, $(shell uname -s)), Linux)
 	SYSTEM = linux
 endif
-ifeq ($(findstring MINGW32, $(shell uname -s)), MINGW32)
-	SYSTEM = mingw32
-endif
 ifeq ($(findstring MINGW64, $(shell uname -s)), MINGW64)
 	SYSTEM = mingw64
-endif
-ifeq ($(findstring CYGWIN, $(shell uname -s)), CYGWIN)
-	SYSTEM = cygwin
 endif
 
 # Determine machine.
@@ -60,20 +54,6 @@ ifeq ($(SYSTEM),linux)
 	INSTALL_DIR = /opt
 endif
 
-# Configuration for mingw32 system.
-ifeq ($(SYSTEM),mingw32)
-	# Compiler.
-	CC = /mingw32/bin/gcc
-	CXX = /mingw32/bin/g++
-
-	# SystemC Installation.
-	export SYSTEMC_INCLUDE=/c/opt/systemc/$(ARCH)/systemc-$(SYSTEMC_VERSION)/include
-	export SYSTEMC_LIBDIR=/c/opt/systemc/$(ARCH)/systemc-$(SYSTEMC_VERSION)/lib-mingw
-
-	# Installation directory.
-	INSTALL_DIR = /c/opt
-endif
-
 # Configuration for mingw64 system.
 ifeq ($(SYSTEM),mingw64)
 	# Compiler.
@@ -87,20 +67,6 @@ ifeq ($(SYSTEM),mingw64)
 	# Installation directory.
 	INSTALL_DIR = /c/opt
 endif
-
-# Configuration for cygwin system.
-# ifeq ($(SYSTEM),cygwin)
-# 	# Compiler.
-# 	CC = /usr/bin/gcc
-# 	CXX = /usr/bin/g++
-
-# 	# FIXME: SystemC Installation.
-# 	export SYSTEMC_INCLUDE=/cygdrive/c/opt/systemc/$(ARCH)/systemc-$(SYSTEMC_VERSION)/include
-# 	export SYSTEMC_LIBDIR=/cygdrive/c/opt/systemc/$(ARCH)/systemc-$(SYSTEMC_VERSION)/lib-cygwin
-
-# 	# Installation directory.
-# 	INSTALL_DIR = /cygdrive/c/opt
-# endif
 
 # Installation directory.
 PREFIX = $(INSTALL_DIR)/veripool/$(ARCH)/$(PACKAGE)
@@ -170,9 +136,6 @@ configure:
 .PHONY: compile
 compile:
 	# NOTE: The FlexLexer.h file is not found when using MSYS2/mingw* unless we copy it to the verilator/src directory!
-ifeq ($(SYSTEM),mingw32)
-	cp -a /usr/include/FlexLexer.h verilator/src/FlexLexer.h
-endif
 ifeq ($(SYSTEM),mingw64)
 	cp -a /usr/include/FlexLexer.h verilator/src/FlexLexer.h
 endif
@@ -202,9 +165,6 @@ install:
 clean:
 	cd $(PACKAGE_NAME) && make clean
 	# NOTE: Remove the FlexLexer.h file.
-ifeq ($(SYSTEM),mingw32)
-	-rm verilator/src/FlexLexer.h
-endif
 ifeq ($(SYSTEM),mingw64)
 	-rm verilator/src/FlexLexer.h
 endif
