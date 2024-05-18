@@ -8,7 +8,6 @@ This **make** file can build the Verilator tool on the following systems:
 * Linux
 * Windows
     * [MSYS2](https://www.msys2.org)/mingw64
-    * [MSYS2](https://www.msys2.org)/mingw32
 
 
 # Get Source Code
@@ -39,7 +38,8 @@ make pull
 ```bash
 # Edit the Makefile for selecting the Verilator version.
 vim Makefile
-PACKAGE_VERSION = v5.004
+PACKAGE_VERSION = master
+# PACKAGE_VERSION = v5.024
 
 # Edit the Makefile for selecting the SystemC version.
 vim Makefile
@@ -64,11 +64,6 @@ make configure
 make compile
 ```
 
-```bash
-# Compile source code using 2 simultaneous jobs.
-make compile J=2
-```
-
 
 # Install
 
@@ -87,17 +82,8 @@ to allow separate installation for different architectures:
 ```bash
 /opt/
 └── veripool/
-    ├── linux_x86_64/               # 64-bit binaries and libraries for Linux
-    │   └── verilator-v5.004/
-    │       ├── bin/
-    │       │   ├── verilator
-    │       │       ...
-    │       └── share/              # ...
-    │           ├── verilator/
-    │           │   ├── include/    # Include directory.
-    │                   ...
-    └── linux_x86/                  # 32-bit binaries and libraries for Linux
-        └── verilator-v5.004/
+    └── linux_x86_64/               # 64-bit binaries and libraries for Linux
+        └── verilator-master/
             ├── bin/
             │   ├── verilator
             │       ...
@@ -105,10 +91,9 @@ to allow separate installation for different architectures:
                 ├── verilator/
                 │   ├── include/    # Include directory.
                         ...
-            ...
 ```
 
-## Windows: MSYS2/mingw64 & MSYS2/mingw32
+## Windows: MSYS2/mingw64
 
 ```bash
 # Install build products.
@@ -123,22 +108,13 @@ to allow separate installation for different architectures:
 ```bash
 /c/opt/
 └── veripool/
-    ├── mingw64_x86_64/             # 64-bit binaries and libraries for Windows
-    │   └── verilator-v5.004/
-
-    ├── mingw32_x86_64/             # 32-bit binaries and libraries for Windows
-    │   └── verilator-v5.004/
+    └── mingw64_x86_64/             # 64-bit binaries and libraries for Windows
+        └── verilator-master/
+            ├── bin/
+            │   ├── verilator
+            │       ...
+            └── share/              # ...
+                ├── verilator/
+                │   ├── include/    # Include directory.
+                        ...
 ```
-
-
-# Tested System Configurations
-
-System  | M=                | M=32  
---------|-------------------|-------------------
-linux   | Fedora-37 64-bit  | 
-mingw64 | Windows-11 64-bit |
-mingw32 | **FIXME**         |
-
-This has been testes with the following Linux distributions and compilers:
-* `Fedora-37 (64-bit)`
-    * `gcc-12.2.1`
